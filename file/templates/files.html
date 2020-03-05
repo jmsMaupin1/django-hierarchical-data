@@ -1,5 +1,7 @@
 {% load mptt_tags %}
-{% if files %}
+<a href="/logout">Logout</a>
+<a href="/addfile">Add a File</a>
+<a href="/addfolder">Add a Folder</a>
 <ul>
     {% recursetree files %}
         <li>
@@ -12,5 +14,3 @@
         </li>
     {% endrecursetree %}
 </ul>
-{% endif %}
-

@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from django.shortcuts import render, reverse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 from file.models import File
 from file.forms import add_filefolder_form
 
 
 # Create your views here.
+@login_required()
 def show_files(request):
     return render(request, 'files.html', {
-        'files': File.objects.all()
+        'files': request.user.folder.get_descendants(include_self=True)
     })
 
 
@@ -17,7 +19,7 @@ def add_file_view(request):
     form = None
 
     if request.method == 'POST':
-        form = add_filefolder_form(request.POST)
+        form = add_filefolder_form(None, request.POST)
 
         if form.is_valid():
             new_file = form.save(commit=False)
@@ -28,7 +30,7 @@ def add_file_view(request):
         return HttpResponseRedirect(reverse('home'))
     
     return render(request, 'generic_form.html', {
-        'form': add_filefolder_form()
+        'form': add_filefolder_form(request.user)
     })
 
 
@@ -37,7 +39,7 @@ def add_folder_view(request):
     form = None
 
     if request.method == 'POST':
-        form = add_filefolder_form(request.POST)
+        form = add_filefolder_form(None, request.POST)
 
         if form.is_valid():
             new_folder = form.save(commit=False)
@@ -48,5 +50,5 @@ def add_folder_view(request):
         return HttpResponseRedirect(reverse('home'))
     
     return render(request, 'generic_form.html', {
-        'form': add_filefolder_form()
+        'form': add_filefolder_form(request.user)
     })
